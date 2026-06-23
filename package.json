@@ -4,6 +4,8 @@
   "private": true,
   "description": "Premium dark scroll-driven borscht landing page",
   "scripts": {
+    "dev": "npx -y serve -l 3000 .",
+    "start": "npx -y serve -l 3000 .",
     "build": "echo \"No build step - static site\""
   }
 }
