@@ -635,27 +635,62 @@
     }
 
     // ── Frame preload ──────────────────────────────────────────────
-    function onAllLoaded() {
+    let scrollTriggerInited = false;
+
+    function tryStart() {
+      if (scrollTriggerInited) return;
+      const f0 = frames[0];
+      if (!f0 || !f0.complete || !f0.naturalWidth) return;
+      scrollTriggerInited = true;
+
       // #region agent log
-      fetch('http://127.0.0.1:7878/ingest/7d20988c-bb6c-40d2-888c-303c259938d5',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d143c5'},body:JSON.stringify({sessionId:'d143c5',location:'index.html:onAllLoaded',message:'all frames loaded',data:{loadMs:Date.now()-loadStartTime,frameCount:FRAME_COUNT},timestamp:Date.now()})}).catch(()=>{});
+      fetch('http://127.0.0.1:7878/ingest/7d20988c-bb6c-40d2-888c-303c259938d5',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d143c5'},body:JSON.stringify({sessionId:'d143c5',location:'index.html:tryStart',message:'first frame ready — starting',data:{loadedCount,loadMs:Date.now()-loadStartTime,f0w:f0.naturalWidth,f0h:f0.naturalHeight},timestamp:Date.now()})}).catch(()=>{});
       // #endregion
 
       const overlay = document.getElementById('loading-overlay');
-      overlay.classList.add('hidden');
-      setTimeout(() => { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 900);
-
+      if (overlay) {
+        overlay.classList.add('hidden');
+        setTimeout(() => { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 900);
+      }
       initScrollTrigger();
     }
 
+    // Diagnostic: check first frame is actually reachable
+    // #region agent log
+    fetch('./frames/frame0001.jpg', { method: 'HEAD' })
+      .then(r => fetch('http://127.0.0.1:7878/ingest/7d20988c-bb6c-40d2-888c-303c259938d5',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d143c5'},body:JSON.stringify({sessionId:'d143c5',location:'index.html:fetchDiag',message:'HEAD frame0001',data:{status:r.status,ok:r.ok},timestamp:Date.now()})}).catch(()=>{}))
+      .catch(e => fetch('http://127.0.0.1:7878/ingest/7d20988c-bb6c-40d2-888c-303c259938d5',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d143c5'},body:JSON.stringify({sessionId:'d143c5',location:'index.html:fetchDiag',message:'HEAD frame0001 FAILED',data:{err:String(e)},timestamp:Date.now()})}).catch(()=>{}));
+    // #endregion
+
+    let firstError = true;
     for (let i = 0; i < FRAME_COUNT; i++) {
       const img = new Image();
-      img.onload = img.onerror = () => {
+      const idx = i;
+      img.onload = () => {
         loadedCount++;
-        if (loadedCount === FRAME_COUNT) onAllLoaded();
+        if (idx === 0) tryStart();
+      };
+      img.onerror = () => {
+        loadedCount++;
+        // #region agent log
+        if (firstError) {
+          firstError = false;
+          fetch('http://127.0.0.1:7878/ingest/7d20988c-bb6c-40d2-888c-303c259938d5',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d143c5'},body:JSON.stringify({sessionId:'d143c5',location:'index.html:imgError',message:'first image error',data:{idx,src:img.src,loadedCount},timestamp:Date.now()})}).catch(()=>{});
+        }
+        // #endregion
+        if (idx === 0) tryStart(); // even if frame0 errors, unblock the UI
       };
       img.src = `./frames/frame${String(i + 1).padStart(4, '0')}.jpg`;
       frames[i] = img;
     }
+
+    // Hard timeout: if frame0 never fires (request hung), unblock after 8s
+    setTimeout(() => {
+      // #region agent log
+      fetch('http://127.0.0.1:7878/ingest/7d20988c-bb6c-40d2-888c-303c259938d5',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d143c5'},body:JSON.stringify({sessionId:'d143c5',location:'index.html:timeout',message:'8s timeout check',data:{scrollTriggerInited,loadedCount,f0complete:frames[0]&&frames[0].complete,f0naturalW:frames[0]&&frames[0].naturalWidth},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+      tryStart();
+    }, 8000);
   </script>
 </body>
 </html>
