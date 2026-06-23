@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>БОРЩ — Борщ с капусткой, но не красный</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,600&family=Montserrat:ital,wght@0,100;0,300;1,100&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: auto;
+    }
+
+    body {
+      background: #0a0806;
+      color: #ffffff;
+      overflow-x: hidden;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+    }
+
+    /* ── Navigation ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 3rem;
+      pointer-events: none;
+    }
+
+    nav a,
+    nav span {
+      pointer-events: auto;
+    }
+
+    .nav-wordmark {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 1rem;
+      color: #C9943A;
+      letter-spacing: 0.15em;
+      text-decoration: none;
+    }
+
+    .nav-cta {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: 0.7rem;
+      color: #ffffff;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: color 300ms ease;
+    }
+
+    .nav-cta:hover {
+      color: #C9943A;
+    }
+
+    /* ── Video scroll section ── */
+    #video-section {
+      height: 500vh;
+      position: relative;
+    }
+
+    #sticky-video {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #0a0806;
+    }
+
+    .video-frame {
+      position: relative;
+      height: 100vh;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    #vid {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .label {
+      position: absolute;
+      left: 8vw;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      font-style: italic;
+      font-size: 5vw;
+      color: #ffffff;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 2;
+      line-height: 1.2;
+      text-shadow:
+        0 1px 14px rgba(10, 8, 6, 0.7),
+        0 2px 34px rgba(10, 8, 6, 0.55),
+        0 4px 60px rgba(10, 8, 6, 0.4);
+    }
+
+    #hero {
+      flex-shrink: 0;
+      height: 0;
+      overflow: hidden;
+      background: #0a0806;
+      opacity: 0;
+      padding: 0 3rem;
+      pointer-events: none;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-end;
+    }
+
+    .hero-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      width: 100%;
+      padding-left: 8vw;
+      padding-bottom: 0.25rem;
+    }
+
+    .hero-line1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-style: italic;
+      font-size: clamp(2.8rem, 7vw, 6rem);
+      color: #ffffff;
+      letter-spacing: 0.02em;
+      line-height: 1.05;
+    }
+
+    .hero-line2 {
+      display: flex;
+      align-items: center;
+      gap: 1.4em;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 100;
+      font-style: italic;
+      font-size: clamp(0.85rem, 1.8vw, 1.35rem);
+      color: #C9943A;
+      letter-spacing: 0.28em;
+      text-transform: lowercase;
+      margin-top: 1.5rem;
+      padding-left: 0.35em;
+    }
+
+    .hero-line2::before {
+      content: "";
+      width: clamp(2.5rem, 5vw, 4.5rem);
+      height: 1px;
+      background: #C9943A;
+      opacity: 0.55;
+      flex-shrink: 0;
+    }
+
+    /* ── Products ── */
+    #products {
+      padding: 9rem 2rem 11rem;
+    }
+
+    .products-head {
+      max-width: 1100px;
+      margin: 0 auto 5rem;
+      text-align: center;
+    }
+
+    .products-eyebrow {
+      display: inline-block;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: 0.7rem;
+      color: #C9943A;
+      text-transform: uppercase;
+      letter-spacing: 0.4em;
+      margin-bottom: 1.4rem;
+    }
+
+    .products-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-style: italic;
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: #ffffff;
+      letter-spacing: 0.01em;
+    }
+
+    .products-grid {
+      display: flex;
+      justify-content: center;
+      gap: 3.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      flex: 1 1 280px;
+      max-width: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .card-image {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      margin-bottom: 1.75rem;
+      overflow: hidden;
+    }
+
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .card:hover .card-image img {
+      transform: scale(1.06);
+    }
+
+    .card-index {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      z-index: 2;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: 0.65rem;
+      color: #C9943A;
+      letter-spacing: 0.25em;
+      mix-blend-mode: difference;
+    }
+
+    .card-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 1.5rem;
+      color: #ffffff;
+      margin-bottom: 0.9rem;
+      letter-spacing: 0.01em;
+    }
+
+    .card-desc {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: 0.72rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      line-height: 1.7;
+      margin-bottom: 1.4rem;
+      max-width: 220px;
+    }
+
+    .card-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 1.35rem;
+      color: #C9943A;
+      margin-bottom: 1.75rem;
+    }
+
+    .card-divider {
+      width: 1.5rem;
+      height: 1px;
+      background: #C9943A;
+      opacity: 0.4;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-btn {
+      position: relative;
+      isolation: isolate;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: 0.7rem;
+      color: #C9943A;
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      background: transparent;
+      border: 1px solid #C9943A;
+      padding: 0.85em 2.4em;
+      cursor: pointer;
+      overflow: hidden;
+      transition: color 400ms ease, letter-spacing 400ms ease;
+    }
+
+    .card-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: #C9943A;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: -1;
+    }
+
+    .card-btn:hover {
+      color: #000000;
+      letter-spacing: 0.34em;
+    }
+
+    .card-btn:hover::before {
+      transform: scaleX(1);
+    }
+
+    /* ── Footer ── */
+    footer {
+      padding: 3rem 2rem 4rem;
+      text-align: center;
+    }
+
+    footer p {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: 0.7rem;
+      color: #444;
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 1.25rem 1.5rem;
+      }
+
+      .label {
+        left: 6vw;
+        font-size: 7vw;
+      }
+
+      .hero-inner {
+        padding-left: 6vw;
+      }
+
+      .hero-line2 {
+        letter-spacing: 0.22em;
+        margin-top: 1rem;
+      }
+
+      #hero {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+      }
+
+      #products {
+        padding: 5rem 1.5rem 6rem;
+      }
+
+      .products-grid {
+        gap: 4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="nav-wordmark">БОРЩ</a>
+    <a href="#products" class="nav-cta">ЗАКАЗАТЬ</a>
+  </nav>
+
+  <section id="video-section">
+    <div id="sticky-video">
+      <div class="video-frame">
+        <video id="vid" muted playsinline preload="auto">
+          <source src="./fin.mp4" type="video/mp4">
+        </video>
+
+        <div class="label" id="l1">Свёкла.</div>
+        <div class="label" id="l2">Говядина на кости.</div>
+        <div class="label" id="l3">Капуста молодая.</div>
+        <div class="label" id="l4">Всё своё.</div>
+      </div>
+
+      <div id="hero">
+        <div class="hero-inner">
+          <div class="hero-line1">Борщ с капусткой</div>
+          <div class="hero-line2">но не красный</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="products">
+    <div class="products-head">
+      <span class="products-eyebrow">Меню</span>
+      <h2 class="products-title">Собрано по любви</h2>
+    </div>
+    <div class="products-grid">
+      <article class="card">
+        <div class="card-image">
+          <span class="card-index">01</span>
+          <img src="./sku1.png" alt="Борщ с капусткой">
+        </div>
+        <h2 class="card-name">Борщ с капусткой</h2>
+        <p class="card-desc">НО НЕ КРАСНЫЙ</p>
+        <p class="card-price">490 ₽</p>
+        <span class="card-divider"></span>
+        <button class="card-btn" type="button">В КОРЗИНУ</button>
+      </article>
+
+      <article class="card">
+        <div class="card-image">
+          <span class="card-index">02</span>
+          <img src="./sku2.png" alt="Сосисочки">
+        </div>
+        <h2 class="card-name">Сосисочки</h2>
+        <p class="card-desc">ОТБОРНЫЕ. ЖАРЕНЫЕ.</p>
+        <p class="card-price">320 ₽</p>
+        <span class="card-divider"></span>
+        <button class="card-btn" type="button">В КОРЗИНУ</button>
+      </article>
+
+      <article class="card">
+        <div class="card-image">
+          <span class="card-index">03</span>
+          <img src="./sku3.png" alt="Салат какой-то непонятный">
+        </div>
+        <h2 class="card-name">Салат какой-то непонятный</h2>
+        <p class="card-desc">НЕ СПРАШИВАЙ.</p>
+        <p class="card-price">280 ₽</p>
+        <span class="card-divider"></span>
+        <button class="card-btn" type="button">В КОРЗИНУ</button>
+      </article>
+    </div>
+  </section>
+
+  <footer>
+    <p>© БОРЩ. С КАПУСТКОЙ.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    const vid = document.getElementById('vid');
+    const videoFrame = document.querySelector('.video-frame');
+    const HERO_ZONE_VH = 32;
+
+    const labels = {
+      l1: document.getElementById('l1'),
+      l2: document.getElementById('l2'),
+      l3: document.getElementById('l3'),
+      l4: document.getElementById('l4'),
+      hero: document.getElementById('hero')
+    };
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function fadeOpacity(p, fadeInStart, fullStart, fullEnd, fadeOutEnd) {
+      if (p < fadeInStart || p > fadeOutEnd) return 0;
+      if (p >= fullStart && p <= fullEnd) return 1;
+      if (p < fullStart) {
+        return clamp((p - fadeInStart) / (fullStart - fadeInStart), 0, 1);
+      }
+      return clamp(1 - (p - fullEnd) / (fadeOutEnd - fullEnd), 0, 1);
+    }
+
+    function fadeInOnly(p, fadeInStart, fullStart) {
+      if (p < fadeInStart) return 0;
+      if (p >= fullStart) return 1;
+      return clamp((p - fadeInStart) / (fullStart - fadeInStart), 0, 1);
+    }
+
+    function updateHeroLayout(reveal) {
+      const videoHeight = 100 - reveal * HERO_ZONE_VH;
+      videoFrame.style.height = `${videoHeight}vh`;
+      labels.hero.style.height = reveal > 0 ? `${reveal * HERO_ZONE_VH}vh` : '0';
+      labels.hero.style.opacity = reveal;
+      labels.hero.style.paddingTop = `${2.5 * reveal}rem`;
+      labels.hero.style.paddingBottom = `${3 * reveal}rem`;
+    }
+
+    function updateLabels(progress) {
+      labels.l1.style.opacity = fadeOpacity(progress, 0.13, 0.15, 0.25, 0.27);
+      labels.l2.style.opacity = fadeOpacity(progress, 0.28, 0.30, 0.40, 0.42);
+      labels.l3.style.opacity = fadeOpacity(progress, 0.43, 0.45, 0.55, 0.57);
+      labels.l4.style.opacity = fadeOpacity(progress, 0.63, 0.65, 0.75, 0.77);
+      updateHeroLayout(fadeInOnly(progress, 0.78, 0.80));
+    }
+
+    let scrollInitialized = false;
+
+    function initScrollTrigger() {
+      if (scrollInitialized) return;
+      scrollInitialized = true;
+
+      ScrollTrigger.create({
+        trigger: '#video-section',
+        start: 'top top',
+        end: 'bottom bottom',
+        onUpdate: (self) => {
+          if (vid.readyState >= 2 && vid.duration) {
+            vid.currentTime = self.progress * vid.duration;
+          }
+          updateLabels(self.progress);
+        }
+      });
+
+      updateLabels(0);
+      ScrollTrigger.refresh();
+    }
+
+    vid.addEventListener('loadedmetadata', initScrollTrigger);
+
+    if (vid.readyState >= 1) {
+      initScrollTrigger();
+    }
+  </script>
+</body>
+</html>
